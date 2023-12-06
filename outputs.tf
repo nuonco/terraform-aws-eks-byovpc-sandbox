@@ -18,6 +18,23 @@ output "cluster" {
   }
 }
 
+output "vpc" {
+  // NOTE: these are declared here -
+  // https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest?tab=outputs
+  value = {
+    name = lookup(data.aws_vpc.main.tags, "Name", "")
+    id   = data.aws_vpc.main.id
+    cidr = data.aws_vpc.main.cidr_block
+    azs  = data.aws_availability_zones.available.zone_ids
+
+    private_subnet_cidr_blocks = [for s in data.aws_subnet.private : s.cidr_block]
+    private_subnet_ids         = data.aws_subnets.private.ids
+
+    public_subnet_cidr_blocks = [for s in data.aws_subnet.public : s.cidr_block]
+    public_subnet_ids         = data.aws_subnets.public.ids
+  }
+}
+
 output "account" {
   value = {
     id     = data.aws_caller_identity.current.account_id

@@ -65,7 +65,7 @@ module "eks" {
   cluster_endpoint_public_access  = true
 
   vpc_id     = data.aws_vpc.main.id
-  subnet_ids = data.aws_subnets.selected.ids
+  subnet_ids = data.aws_subnets.private.ids
 
   create_kms_key = false
   cluster_encryption_config = {
