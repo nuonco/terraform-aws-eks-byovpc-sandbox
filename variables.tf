@@ -49,7 +49,6 @@ variable "region" {
 variable "cluster_name" {
   type        = string
   description = "The name of the EKS cluster. Will use the install ID by default."
-  default     = ""
 }
 
 variable "eks_version" {
