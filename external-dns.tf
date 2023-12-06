@@ -1,6 +1,6 @@
 locals {
   internal_domain = aws_route53_zone.internal.name
-  public_domain = aws_route53_zone.public.name
+  public_domain   = aws_route53_zone.public.name
   external_dns = {
     namespace = "external-dns"
     extra_args = {
@@ -8,7 +8,7 @@ locals {
       1 = "--zone-id-filter=${aws_route53_zone.internal.id}",
       2 = "--zone-id-filter=${aws_route53_zone.public.id}",
     }
-    value_file    = "values/external-dns.yaml"
+    value_file = "values/external-dns.yaml"
   }
 }
 
@@ -17,7 +17,7 @@ module "external_dns_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.0"
 
-  role_name = "external-dns-${var.nuon_id}"
+  role_name = "external-dns-${local.install_name}"
 
   attach_external_dns_policy = true
   external_dns_hosted_zone_arns = [
@@ -44,7 +44,7 @@ resource "helm_release" "external_dns" {
 
   set {
     name  = "txt_owner_id"
-    value = var.nuon_id
+    value = local.install_name
   }
 
   set {
@@ -75,7 +75,7 @@ resource "helm_release" "external_dns" {
   ]
 
   depends_on = [
-     module.external_dns_irsa,
-     helm_release.metrics_server
+    module.external_dns_irsa,
+    helm_release.metrics_server
   ]
 }
