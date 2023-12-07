@@ -13,7 +13,6 @@ locals {
   /* } */
 
   vars = {
-    id     = local.install_name
     region = var.region
   }
 }

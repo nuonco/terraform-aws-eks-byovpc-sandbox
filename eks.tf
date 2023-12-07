@@ -44,7 +44,7 @@ resource "aws_kms_key" "eks" {
 
 # TODO: Looks like we're not using this?
 # resource "aws_kms_alias" "eks" {
-#   name          = "alias/nuon/eks-${local.vars.id}"
+#   name          = "alias/nuon/eks-${local.install_name}"
 #   target_key_id = aws_kms_key.eks.id
 # }
 
@@ -101,7 +101,7 @@ module "eks" {
 
   # HACK: https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1986
   node_security_group_tags = {
-    "kubernetes.io/cluster/${local.vars.id}" = null
+    "kubernetes.io/cluster/${local.install_name}" = null
   }
 
   # this can't rely on default_tags.

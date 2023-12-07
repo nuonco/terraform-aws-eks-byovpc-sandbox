@@ -9,9 +9,9 @@ module "cert_manager_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.0"
 
-  role_name = "cert-manager-${local.vars.id}"
+  role_name = "cert-manager-${local.install_name}"
 
-  attach_cert_manager_policy    = true
+  attach_cert_manager_policy = true
   cert_manager_hosted_zone_arns = [
     aws_route53_zone.internal.arn,
     aws_route53_zone.public.arn,
