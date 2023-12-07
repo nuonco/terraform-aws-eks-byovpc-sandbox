@@ -1,5 +1,5 @@
 locals {
-  cluster_name    = var.cluster_name
+  cluster_name    = local.install_name
   cluster_version = var.eks_version
 
   instance_types = var.instance_types

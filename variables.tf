@@ -1,7 +1,5 @@
 locals {
-
-  install_name = var.cluster_name
-
+  install_name   = (var.install_name != "" ? var.install_name : var.cluster_name)
   install_region = var.region
   tags           = merge({ nuon_id = local.install_name }, var.tags)
 
@@ -12,10 +10,12 @@ locals {
   /*   triggerLoopOnEvent = true */
   /*   interval           = "15m" */
   /* } */
+}
 
-  vars = {
-    region = var.region
-  }
+variable "install_name" {
+  type        = string
+  description = "The name of this install. Will be used for the EKS cluster, various tags, and other resources."
+  default     = ""
 }
 
 variable "vpc_id" {
