@@ -8,7 +8,7 @@ locals {
 }
 
 provider "aws" {
-  region = local.vars.region
+  region = local.install_region
 
   assume_role {
     role_arn = var.assume_role_arn
@@ -21,7 +21,7 @@ provider "aws" {
 
 # hack. see eks.tf for more details
 provider "aws" {
-  region = local.vars.region
+  region = local.install_region
   alias  = "no_tags"
 
   assume_role {

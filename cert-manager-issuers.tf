@@ -34,7 +34,7 @@ resource "kubectl_manifest" "internal_cluster_issuer" {
             }
             dns01 = {
               route53 = {
-                region = local.vars.region
+                region = local.install_region
                 hostedZoneID : aws_route53_zone.internal.zone_id,
               }
             }
@@ -73,7 +73,7 @@ resource "kubectl_manifest" "public_cluster_issuer" {
             }
             dns01 = {
               route53 = {
-                region = local.vars.region
+                region = local.install_region
                 hostedZoneID : aws_route53_zone.public.zone_id
               }
             }

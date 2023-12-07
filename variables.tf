@@ -2,7 +2,8 @@ locals {
 
   install_name = var.cluster_name
 
-  tags = merge({ nuon_id = local.install_name }, var.tags)
+  install_region = var.region
+  tags           = merge({ nuon_id = local.install_name }, var.tags)
 
   /* external_dns = { */
   /*   registry           = "txt" */
