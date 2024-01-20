@@ -34,6 +34,9 @@ output "vpc" {
 
     public_subnet_cidr_blocks = [for s in data.aws_subnet.public : s.cidr_block]
     public_subnet_ids         = data.aws_subnets.public.ids
+
+    default_security_group_id = data.aws_security_group.default.id
+    default_security_group_arn = data.aws_security_group.default.arn
   }
 }
 

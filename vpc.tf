@@ -48,3 +48,8 @@ data "aws_subnet" "public" {
   for_each = toset(data.aws_subnets.public.ids)
   id       = each.value
 }
+
+data "aws_security_group" "default" {
+  name = "default"
+  vpc_id = local.vpc_id
+}
