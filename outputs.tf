@@ -1,6 +1,6 @@
 output "runner" {
   value = {
-    default_iam_role_arn = module.odr_iam_role.iam_role_arn
+    odr_iam_role_arn     = module.odr_iam_role.iam_role_arn
   }
 }
 
