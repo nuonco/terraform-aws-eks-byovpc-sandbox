@@ -1,32 +1,37 @@
 Parameters:
-  ProvisionerArn:
-    Type: String
-  PhoneHomeEndpoint:
-    Type: String
 Resources:
-  # Role and policy that allows source account to provision sandbox.
-  SandboxBootstrapRole:
+  InstallRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: SandboxBootstrapRole
+      RoleName: InstallRole
       AssumeRolePolicyDocument:
         Statement:
           - Effect: Allow
             Action: sts:AssumeRole
             Principal:
-              AWS: !Ref ProvisionerArn
-  SandboxBootstrapPolicy:
+              AWS: arn:aws:iam::676549690856:root
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              AWS: arn:aws:iam::007754799877:root
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              AWS: arn:aws:iam::814326426574:root
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              AWS: arn:aws:iam::766121324316:root
+  ProvisionPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: SandboxBootstrapPolicy
+      PolicyName: ProvisionPolicy
       Roles:
-        - !Ref SandboxBootstrapRole
+        - !Ref InstallRole
       PolicyDocument:
         Statement:
           - Effect: Allow
             Action:
-              - route53:ChangeResourceRecordSets
-              - iam:CreatePolicyVersion
               - ec2:AllocateAddress
               - ec2:AssociateRouteTable
               - ec2:AttachInternetGateway
@@ -37,7 +42,6 @@ Resources:
               - ec2:DescribeSecurityGroupRules
               - ec2:DescribeSecurityGroups
               - ec2:CreateInternetGateway
-              - ec2:CreateLaunchTemplate
               - ec2:CreateNatGateway
               - ec2:CreateRoute
               - ec2:CreateRouteTable
@@ -45,6 +49,8 @@ Resources:
               - ec2:CreateSubnet
               - ec2:CreateTags
               - ec2:CreateVpc
+              - ec2:CreateLaunchTemplateVersion
+              - ec2:CreateLaunchTemplate
               - ec2:DescribeAddresses
               - ec2:DescribeInternetGateways
               - ec2:DescribeLaunchTemplateVersions
@@ -59,8 +65,10 @@ Resources:
               - ec2:DescribeVpcClassicLink
               - ec2:DescribeVpcClassicLinkDnsSupport
               - ec2:DescribeVpcs
+              - ec2:DescribeAvailabilityZones
               - ec2:ModifySubnetAttribute
               - ec2:ModifyVpcAttribute
+              - ec2:ModifyLaunchTemplate
               - ec2:RevokeSecurityGroupEgress
               - ec2:RunInstances
               - ecr:CreateRepository
@@ -73,10 +81,17 @@ Resources:
               - eks:TagResource
               - eks:ListTagsForResource
               - eks:DescribeNodegroup
+              - eks:ListAddons
+              - eks:CreateAddon
+              - eks:DescribeAddon
+              - eks:DescribeAddonConfiguration
+              - eks:DescribeAddonVersions
               - iam:AttachRolePolicy
               - iam:CreateOpenIDConnectProvider
+              - iam:UpdateAssumeRolePolicy
               - iam:TagOpenIDConnectProvider
               - iam:CreatePolicy
+              - iam:CreatePolicyVersion
               - iam:CreateRole
               - iam:CreateServiceLinkedRole
               - iam:GetOpenIDConnectProvider
@@ -101,6 +116,7 @@ Resources:
               - kms:PutKeyPolicy
               - kms:TagResource
               - logs:CreateLogGroup
+              - logs:TagLogGroup
               - logs:DescribeLogGroups
               - logs:ListTagsLogGroup
               - logs:PutRetentionPolicy
@@ -111,48 +127,94 @@ Resources:
               - route53:GetHostedZone
               - route53:ListResourceRecordSets
               - route53:ListTagsForResource
-              - route53:TagResource
+              - route53:ChangeResourceRecordSets
               - s3:GetObject
               - s3:ListBucket
               - s3:PutObject
-            Resource: '*'
-
-  # function that sends the ARN of the SandboxBootstrapRole to the source AWS account,
-  # so it can assume the role and start provisioning.
-  PhoneHomeFunction:
-    Type: AWS::Lambda::Function
+            Resource: "*"
+  DeprovisionPolicy:
+    Type: AWS::IAM::Policy
     Properties:
-      Role: !GetAtt PhoneHomeExecutionRole.Arn
-      Handler: index.handler
-      Runtime: nodejs18.x
-      Environment:
-        Variables:
-          SandboxBootstrapRoleArn: !GetAtt SandboxBootstrapRole.Arn
-          PhoneHomeEndpoint: !Ref PhoneHomeEndpoint
-      Code:
-        ZipFile: !Sub |
-          var res = require('cfn-response');
-          exports.handler = function(e, ctx) {
-            res.send(e, ctx, res.SUCCESS, {
-              SandboxBootstrapRoleArn: process.env.SandboxBootstrapRoleArn,
-              PhoneHomeEndpoint: process.env.PhoneHomeEndpoint
-            });
-          };
-  PhoneHomeExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: PhoneHomeExecutionRole
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
+      PolicyName: ProvisionPolicy
+      Roles:
+        - !Ref InstallRole
+      PolicyDocument:
         Statement:
           - Effect: Allow
             Action:
-              - sts:AssumeRole
-            Principal:
-              Service: lambda.amazonaws.com
-  PhoneHomeCustomResource:
-    Type: Custom::PhoneHome
-    Properties:
-      ServiceToken: !GetAtt PhoneHomeFunction.Arn
+            - ec2:DeleteInternetGateway
+            - ec2:DeleteVpc
+            - ec2:DeleteNatGateway
+            - ec2:DeleteRoute
+            - ec2:DeleteRouteTable
+            - ec2:DeleteSubnet
+            - ec2:DeleteTags
+            - ec2:DescribeAddresses
+            - ec2:DescribeInternetGateways
+            - ec2:DescribeLaunchTemplateVersions
+            - ec2:DescribeLaunchTemplates
+            - ec2:DescribeNatGateways
+            - ec2:DescribeNetworkAcls
+            - ec2:DeleteNetworkInterface
+            - ec2:DetachNetworkInterface
+            - ec2:DescribeNetworkInterfaces
+            - ec2:DescribeRouteTables
+            - ec2:DescribeSecurityGroupRules
+            - ec2:DescribeSecurityGroups
+            - ec2:DescribeSubnets
+            - ec2:DescribeTags
+            - ec2:DescribeVpcAttribute
+            - ec2:DescribeVpcClassicLink
+            - ec2:DescribeVpcClassicLinkDnsSupport
+            - ec2:DescribeVpcs
+            - ec2:DetachInternetGateway
+            - ec2:DisassociateAddress
+            - ec2:DisassociateRouteTable
+            - ec2:DeleteLaunchTemplate
+            - ec2:DeleteLaunchTemplateVersions
+            - ec2:ReleaseAddress
+            - ec2:RevokeSecurityGroupIngress
+            - ecr:DeleteRepository
+            - ecr:DescribeRepositories
+            - ecr:ListTagsForResource
+            - eks:DeleteCluster
+            - eks:DeleteNodegroup
+            - eks:DescribeCluster
+            - eks:DescribeNodegroup
+            - eks:DeleteAddon
+            - iam:DeleteOpenIDConnectProvider
+            - iam:DeletePolicy
+            - iam:DeletePolicyVersion
+            - iam:DeleteRole
+            - iam:DeleteRolePolicy
+            - iam:DetachRolePolicy
+            - iam:GetOpenIDConnectProvider
+            - iam:GetPolicy
+            - iam:GetPolicyVersion
+            - iam:GetRole
+            - iam:GetRolePolicy
+            - iam:ListAttachedRolePolicies
+            - iam:ListInstanceProfilesForRole
+            - iam:ListPolicyVersions
+            - iam:ListRolePolicies
+            - kms:DeleteAlias
+            - kms:DescribeKey
+            - kms:GetKeyPolicy
+            - kms:GetKeyRotationStatus
+            - kms:ListAliases
+            - kms:ListResourceTags
+            - kms:ScheduleKeyDeletion
+            - logs:DeleteLogGroup
+            - logs:DescribeLogGroups
+            - logs:ListTagsLogGroup
+            - route53:DeleteHostedZone
+            - route53:GetDNSSEC
+            - route53:GetHostedZone
+            - route53:ListResourceRecordSets
+            - route53:ListTagsForResource
+            - route53:ChangeTagsForResource
+            - s3:GetObject
+            - s3:ListBucket
+            - kms:RetireGrant
+            - ec2:DeleteSecurityGroup
+            Resource: "*"
