@@ -1,9 +1,20 @@
 Parameters:
+  RoleName:
+    Type: String
+    Default: "nuon-aws-eks-byovpc-install-access"
+    Description: "Enter a name for the install role"
+
+Outputs:
+  RoleARN:
+    Description: IAM Role ARN
+    Value: !GetAtt InstallRole.Arn
+
 Resources:
   InstallRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: InstallRole
+      RoleName:
+        Ref: RoleName
       AssumeRolePolicyDocument:
         Statement:
           - Effect: Allow
