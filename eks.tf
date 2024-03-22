@@ -2,7 +2,7 @@ locals {
   cluster_name    = local.install_name
   cluster_version = var.eks_version
 
-  instance_types = var.instance_types
+  instance_types = [var.default_instance_type]
   min_size       = var.min_size
   max_size       = var.max_size
   desired_size   = var.desired_size
