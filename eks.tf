@@ -1,5 +1,5 @@
 locals {
-  cluster_name    = local.install_name
+  cluster_name    = (var.cluster_name != "" ? var.cluster_name : var.nuon_id)
   cluster_version = var.eks_version
 
   instance_types = [var.default_instance_type]
@@ -41,12 +41,6 @@ locals {
 resource "aws_kms_key" "eks" {
   description = "Key for ${local.cluster_name} EKS cluster"
 }
-
-# TODO: Looks like we're not using this?
-# resource "aws_kms_alias" "eks" {
-#   name          = "alias/nuon/eks-${local.install_name}"
-#   target_key_id = aws_kms_key.eks.id
-# }
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"

@@ -1,5 +1,5 @@
 locals {
-  install_name   = (var.install_name != "" ? var.install_name : var.cluster_name)
+  install_name   = (var.install_name != "" ? var.install_name : var.nuon_id)
   install_region = var.region
   tags           = merge(var.tags, var.additional_tags)
 }
