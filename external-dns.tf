@@ -8,7 +8,7 @@ locals {
       1 = "--zone-id-filter=${aws_route53_zone.internal.id}",
       2 = "--zone-id-filter=${aws_route53_zone.public.id}",
     }
-    value_file = "values/external-dns.yaml"
+    value_file = "${path.module}/values/external-dns.yaml"
   }
 }
 
