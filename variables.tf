@@ -110,3 +110,15 @@ variable "tags" {
   type        = map(any)
   description = "List of custom tags to add to the install resources. Used for taxonomic purposes."
 }
+
+variable "private_subnet_ids" {
+  type        = string
+  default     = ""
+  description = "Comma-separated string of IDs of the subnets to create private resources in."
+}
+
+variable "public_subnet_ids" {
+  type        = string
+  default     = ""
+  description = "Comma-separated string of IDs of the subnets to create public resources in."
+}
