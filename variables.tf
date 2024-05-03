@@ -122,3 +122,9 @@ variable "public_subnet_ids" {
   default     = ""
   description = "Comma-separated string of IDs of the subnets to create public resources in."
 }
+
+variable "enable_nginx_ingress_controller" {
+  type        = string
+  default     = "true"
+  description = "Toggle the nginx-ingress controller in the EKS cluster."
+}
