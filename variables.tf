@@ -75,16 +75,6 @@ variable "region" {
   description = "The AWS region to launch the cluster in."
 }
 
-variable "assume_role_arn" {
-  type        = string
-  description = "The role arn to assume during provisioning of this sandbox."
-}
-
-variable "external_access_role_arns" {
-  type        = list(string)
-  description = "Roles for external access to the cluster."
-}
-
 variable "waypoint_odr_namespace" {
   type        = string
   description = "Namespace in which the ODR IAM Role's service account presides."
@@ -127,4 +117,9 @@ variable "enable_nginx_ingress_controller" {
   type        = string
   default     = "true"
   description = "Toggle the nginx-ingress controller in the EKS cluster."
+}
+
+variable "runner_install_role" {
+  type        = string
+  description = "The role that is used to install the runner, and should be granted access."
 }
