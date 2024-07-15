@@ -16,7 +16,14 @@ variable "cluster_name" {
   default     = ""
 }
 
+// deprecated, use cluster_version instead
 variable "eks_version" {
+  type        = string
+  description = "The Kubernetes version to use for the EKS cluster."
+  default     = "1.28"
+}
+
+variable "cluster_version" {
   type        = string
   description = "The Kubernetes version to use for the EKS cluster."
   default     = "1.28"
