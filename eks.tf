@@ -1,6 +1,6 @@
 locals {
   cluster_name    = (var.cluster_name != "" ? var.cluster_name : var.nuon_id)
-  cluster_version = var.eks_version
+  cluster_version = var.cluster_version
 
   instance_types = [var.default_instance_type]
   min_size       = var.min_size
